@@ -3,9 +3,12 @@ using System.Windows.Media;
 
 namespace DisplayNotify;
 
-internal sealed record DisplayInfo(string Name, string Connection, bool IsInternal, string PhysicalSize)
+internal sealed record DisplayInfo(string Name, string Connection, bool IsInternal, double? DiagonalInches)
 {
     public Brush BadgeBackground => new SolidColorBrush(IsInternal ? Color.FromRgb(22, 163, 74) : Color.FromRgb(37, 99, 235));
+    public string PhysicalSize => DiagonalInches is double diagonalInches
+        ? $"{diagonalInches:F1}\""
+        : "物理尺寸未报告";
 }
 
 internal static class DisplayConfigurationReader
@@ -42,10 +45,10 @@ internal static class DisplayConfigurationReader
             var name = string.IsNullOrWhiteSpace(targetName.MonitorFriendlyDeviceName)
                 ? $"显示器 {index + 1}"
                 : targetName.MonitorFriendlyDeviceName.Trim();
-            var physicalSize = TryGetSourceName(path.SourceInfo, out var sourceName)
+            var diagonalInches = TryGetSourceName(path.SourceInfo, out var sourceName)
                 ? GetPhysicalSize(sourceName.ViewGdiDeviceName)
-                : "物理尺寸未报告";
-            displays.Add(new DisplayInfo(name, isInternal ? "内部显示器" : ToConnectionName(targetName.OutputTechnology), isInternal, physicalSize));
+                : null;
+            displays.Add(new DisplayInfo(name, isInternal ? "内部显示器" : ToConnectionName(targetName.OutputTechnology), isInternal, diagonalInches));
         }
         return displays;
     }
@@ -80,17 +83,17 @@ internal static class DisplayConfigurationReader
         return DisplayConfigGetDeviceInfo(ref sourceName) == 0;
     }
 
-    private static string GetPhysicalSize(string gdiDeviceName)
+    private static double? GetPhysicalSize(string gdiDeviceName)
     {
         if (string.IsNullOrWhiteSpace(gdiDeviceName))
         {
-            return "物理尺寸未报告";
+            return null;
         }
 
         var deviceContext = CreateDC("DISPLAY", gdiDeviceName, null, IntPtr.Zero);
         if (deviceContext == IntPtr.Zero)
         {
-            return "物理尺寸未报告";
+            return null;
         }
 
         try
@@ -99,11 +102,11 @@ internal static class DisplayConfigurationReader
             var heightMm = GetDeviceCaps(deviceContext, VertSize);
             if (widthMm <= 0 || heightMm <= 0)
             {
-                return "物理尺寸未报告";
+                return null;
             }
 
             var diagonalInches = Math.Sqrt(widthMm * widthMm + heightMm * heightMm) / 25.4;
-            return $"{diagonalInches:F1}\" ({widthMm}×{heightMm}mm)";
+            return diagonalInches;
         }
         finally
         {

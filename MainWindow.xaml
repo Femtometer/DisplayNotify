@@ -80,10 +80,11 @@
                         <TextBlock Text="◉" Foreground="{StaticResource PrimaryBrush}" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="护眼卫士" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource InfoBrush}" />
+                        <TextBlock x:Name="AppTitle" Text="护眼卫士" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource InfoBrush}" />
                         <TextBlock Text="游戏与屏幕尺寸监测" FontSize="11" Foreground="#6B7280" Margin="0,1,0,0" />
                     </StackPanel>
                 </StackPanel>
+                <TextBlock x:Name="ProtectionWarningText" Grid.ColumnSpan="2" Text="⚠天天，请连接电视机！" FontSize="24" FontWeight="Bold" Foreground="#DC2626" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" IsHitTestVisible="False" />
                 <Button Grid.Column="1" Content="↻ 立即刷新" Style="{StaticResource RefreshButton}" Click="RefreshButton_Click" VerticalAlignment="Center" />
             </Grid>
         </Border>
