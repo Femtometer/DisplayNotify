@@ -26,32 +26,39 @@ public partial class MainWindow : Window
     {
         var runningApplications = GetRunningMonitoredApplications();
         var warningActive = runningApplications.Count > 0;
-        AppTitle.Foreground = new SolidColorBrush(warningActive ? Color.FromRgb(220, 38, 38) : Color.FromRgb(51, 51, 51));
 
-        if (warningActive && WindowState == WindowState.Minimized)
+        if (warningActive)
         {
-            WindowState = WindowState.Normal;
-            Activate();
+            AppTitle.Foreground = new SolidColorBrush(Color.FromRgb(220, 38, 38));
         }
-
+        else
+        {
+            AppTitle.ClearValue(System.Windows.Documents.TextElement.ForegroundProperty);
+        }
         try
         {
             var displays = DisplayConfigurationReader.GetActiveDisplays();
             DisplayList.ItemsSource = displays;
             var external = displays.Where(display => !display.IsInternal).ToList();
-            var smallScreenDetected = displays.Any(display => display.DiagonalInches < SmallScreenThresholdInches);
-            var protectionActive = warningActive && smallScreenDetected;
+            var largeExternalDisplayConnected = external.Any(display => display.DiagonalInches >= SmallScreenThresholdInches);
+            var protectionActive = warningActive && !largeExternalDisplayConnected;
             UpdateWindowProtection(protectionActive);
+
+            if (protectionActive && WindowState == WindowState.Minimized)
+            {
+                WindowState = WindowState.Normal;
+                Activate();
+            }
 
             if (protectionActive)
             {
                 StatusIndicator.Fill = new SolidColorBrush(Color.FromRgb(220, 38, 38));
-                StatusText.Text = $"检测到正在运行：{string.Join("、", runningApplications)}；屏幕小于{SmallScreenThresholdInches:0}\"，已启用窗口保护";
+                StatusText.Text = $"\u672a\u8fde\u63a5{SmallScreenThresholdInches:0}\"\u4ee5\u4e0a\u5916\u63a5\u663e\u793a\u5668\uff0c\u5df2\u542f\u7528\u7a97\u53e3\u4fdd\u62a4";
             }
             else if (warningActive)
             {
-                StatusIndicator.Fill = new SolidColorBrush(Color.FromRgb(220, 38, 38));
-                StatusText.Text = $"检测到正在运行：{string.Join("、", runningApplications)}";
+                StatusIndicator.Fill = new SolidColorBrush(Color.FromRgb(22, 163, 74));
+                StatusText.Text = $"\u68c0\u6d4b\u5230\u6b63\u5728\u8fd0\u884c\uff1b\u5df2\u8fde\u63a5{SmallScreenThresholdInches:0}\"\u4ee5\u4e0a\u5916\u63a5\u663e\u793a\u5668";
             }
             else if (displays.Count == 0)
             {

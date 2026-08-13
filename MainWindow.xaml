@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="VisionGuard V1.00" Height="400" Width="600"
+        Title="VisionGuard V1.01" Height="400" Width="600"
         ResizeMode="CanMinimize" Icon="/eye.ico" WindowStartupLocation="CenterScreen"
         Background="#F0F4F8" FontFamily="Microsoft YaHei">
     <Window.Resources>
@@ -80,7 +80,7 @@
                         <TextBlock Text="◉" Foreground="{StaticResource PrimaryBrush}" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock x:Name="AppTitle" Text="护眼卫士" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource InfoBrush}" />
+                        <TextBlock x:Name="AppTitle" Text="护眼卫士" FontSize="17" FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}" />
                         <TextBlock Text="游戏与屏幕尺寸监测" FontSize="11" Foreground="#6B7280" Margin="0,1,0,0" />
                     </StackPanel>
                 </StackPanel>
