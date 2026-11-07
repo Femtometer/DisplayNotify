@@ -11,6 +11,7 @@ public partial class MainWindow : Window
     private static readonly string[] MonitoredProcessNames = ["Ryujinx", "Steam"];
     private readonly DispatcherTimer _refreshTimer;
     private bool _isCloseAuthorized;
+    private bool? _protectionActive;
 
     public MainWindow()
     {
@@ -53,12 +54,12 @@ public partial class MainWindow : Window
             if (protectionActive)
             {
                 StatusIndicator.Fill = new SolidColorBrush(Color.FromRgb(220, 38, 38));
-                StatusText.Text = $"\u672a\u8fde\u63a5{SmallScreenThresholdInches:0}\"\u4ee5\u4e0a\u5916\u63a5\u663e\u793a\u5668\uff0c\u5df2\u542f\u7528\u7a97\u53e3\u4fdd\u62a4";
+                StatusText.Text = $"未连接{SmallScreenThresholdInches:0}\"以上外接显示器，已启用窗口保护";
             }
             else if (warningActive)
             {
                 StatusIndicator.Fill = new SolidColorBrush(Color.FromRgb(22, 163, 74));
-                StatusText.Text = $"\u68c0\u6d4b\u5230\u6b63\u5728\u8fd0\u884c\uff1b\u5df2\u8fde\u63a5{SmallScreenThresholdInches:0}\"\u4ee5\u4e0a\u5916\u63a5\u663e\u793a\u5668";
+                StatusText.Text = $"检测到正在运行；已连接{SmallScreenThresholdInches:0}\"以上外接显示器";
             }
             else if (displays.Count == 0)
             {
@@ -92,9 +93,16 @@ public partial class MainWindow : Window
 
     private void UpdateWindowProtection(bool active)
     {
+        var shouldMinimize = !active && _protectionActive != false;
+        _protectionActive = active;
         ProtectionWarningText.Visibility = active ? Visibility.Visible : Visibility.Collapsed;
         Topmost = active;
         ResizeMode = active ? ResizeMode.NoResize : ResizeMode.CanMinimize;
+
+        if (shouldMinimize)
+        {
+            WindowState = WindowState.Minimized;
+        }
 
         if (!active || WindowState != WindowState.Normal)
         {

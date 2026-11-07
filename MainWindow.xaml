@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="VisionGuard V1.01" Height="400" Width="600"
+        Title="VisionGuard V1.02" Height="600" Width="800"
         ResizeMode="CanMinimize" Icon="/eye.ico" WindowStartupLocation="CenterScreen"
         Background="#F0F4F8" FontFamily="Microsoft YaHei">
     <Window.Resources>
